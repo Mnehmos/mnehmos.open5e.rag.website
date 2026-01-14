@@ -1206,31 +1206,37 @@ const {
       if (done) break;
 
       buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() || "";
 
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const dataStr = line.slice(6);
-          if (dataStr === "[DONE]") continue;
+      // SSE events are separated by double newlines
+      // Process complete events only
+      let eventEnd;
+      while ((eventEnd = buffer.indexOf("\n\n")) !== -1) {
+        const eventData = buffer.slice(0, eventEnd);
+        buffer = buffer.slice(eventEnd + 2);
 
-          try {
-            const data = JSON.parse(dataStr);
-            if (data.type === "sources") {
-              sources = data.sources || [];
-            } else if (data.type === "delta" && data.text) {
-              answerParts.push(data.text);
-            } else if (data.type === "error") {
-              throw new Error(data.error || "Unknown error from API");
-            }
-            // Ignore "done" events and other types
-          } catch (parseError) {
-            // Only skip JSON parse errors, not thrown API errors
-            if (parseError instanceof SyntaxError) {
-              // Skip unparseable JSON lines (shouldn't happen with valid SSE)
-              console.warn("Failed to parse SSE line:", dataStr);
-            } else {
-              throw parseError;
+        // Process each line in the event (typically just one "data:" line)
+        for (const line of eventData.split("\n")) {
+          if (line.startsWith("data: ")) {
+            const dataStr = line.slice(6);
+            if (dataStr === "[DONE]") continue;
+
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.type === "sources") {
+                sources = data.sources || [];
+              } else if (data.type === "delta" && data.text) {
+                answerParts.push(data.text);
+              } else if (data.type === "error") {
+                throw new Error(data.error || "Unknown error from API");
+              }
+              // Ignore "done" events and other types
+            } catch (parseError) {
+              // Only skip JSON parse errors, not thrown API errors
+              if (parseError instanceof SyntaxError) {
+                console.warn("Failed to parse SSE line:", dataStr);
+              } else {
+                throw parseError;
+              }
             }
           }
         }
