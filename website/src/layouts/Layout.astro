@@ -1,0 +1,591 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "Open5e Developer Chatbot - AI-powered RAG assistant for the Open5e API and Frontend source code.",
+} = Astro.props;
+
+// JSON-LD for Web Application (enhanced for SEO)
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Open5e Developer RAG Chatbot",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript. Requires HTML5.",
+  "url": Astro.url.href,
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+  },
+  "description": description,
+  "author": {
+    "@type": "Person",
+    "name": "Mnehmos",
+    "url": "https://mnehmos.github.io/Mnehmos/",
+  },
+  "keywords": "Open5e, D&D 5e, API, RAG, Developer Tools, Django, Nuxt.js, Chatbot",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content="Open5e, D&D 5e, API, RAG, Retrieval Augmented Generation, Django, Nuxt.js, Developer Tools, Index Foundry, Mnehmos"
+    />
+    <meta name="author" content="Mnehmos" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={Astro.url.href} />
+
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#0d0d0d" />
+    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: dark)" />
+
+    <!-- Mobile Web App Capable -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Open5e Dev" />
+
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href={`${import.meta.env.BASE_URL}favicon.svg`}
+    />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>{title}</title>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="app-container">
+      <header class="app-header">
+        <div class="logo">
+          <span class="logo-icon">&#128029;</span>
+          <h1>Open5e Developer Chatbot</h1>
+        </div>
+        <p class="tagline">
+          AI-Powered RAG Assistant for Open5e Source Code
+        </p>
+      </header>
+
+      <main class="app-main" id="main-content">
+        <slot />
+      </main>
+
+      <footer class="app-footer">
+        <div class="footer-content">
+          <p>&copy; {new Date().getFullYear()} Open5e Developer Chatbot</p>
+          <div class="portfolio-links">
+            <span
+              >Powered by <a
+                href="https://github.com/Mnehmos/mnehmos.index-foundry.mcp"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="portfolio-link">Index Foundry</a
+              ></span
+            >
+            <span class="divider">|</span>
+            <span
+              >Built by <a
+                href="https://mnehmos.github.io/Mnehmos/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="portfolio-link">Mnehmos</a
+              ></span
+            >
+            <a
+              href="https://github.com/Mnehmos/mnehmos.open5e.rag.website"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-icon"
+              aria-label="GitHub Repository"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+                ></path>
+              </svg>
+            </a>
+          </div>
+          <p class="legal-text">
+            Sources: <a href="https://github.com/open5e/open5e-api" target="_blank" rel="noopener">open5e-api</a> (Django REST API) |
+            <a href="https://github.com/open5e/open5e" target="_blank" rel="noopener">open5e</a> (Nuxt.js Frontend)
+          </p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  /* CSS Reset */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* CSS Custom Properties - Purple/Slate Mnehmos Theme */
+  :root {
+    /* Safe area insets for notched devices */
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+
+    /* Touch target minimum size per Apple HIG */
+    --touch-target-min: 44px;
+
+    /* Colors - Dark slate palette */
+    --color-bg-primary: #0f172a;
+    --color-bg-secondary: #1e293b;
+    --color-bg-tertiary: #334155;
+    --color-bg-elevated: #475569;
+
+    /* Accent colors - Purple */
+    --color-accent-primary: #7c3aed;
+    --color-accent-secondary: #a78bfa;
+    --color-accent-hover: #8b5cf6;
+
+    /* Text colors */
+    --color-text-primary: #f1f5f9;
+    --color-text-secondary: #cbd5e1;
+    --color-text-muted: #94a3b8;
+
+    /* Semantic colors */
+    --color-success: #22c55e;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+    --color-warning: #f59e0b;
+
+    /* Border colors */
+    --color-border: #475569;
+    --color-border-subtle: #334155;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.2);
+
+    /* Typography */
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "Inter", sans-serif;
+    --font-mono: "JetBrains Mono", "Consolas", monospace;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+
+    /* Border radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+  }
+
+  /* Base styles */
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    background-image:
+      radial-gradient(
+        ellipse at top,
+        rgba(124, 58, 237, 0.05) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at bottom,
+        rgba(59, 130, 246, 0.03) 0%,
+        transparent 50%
+      );
+    min-height: 100vh;
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin-bottom: var(--space-md);
+  }
+
+  a {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--color-accent-secondary);
+    color: var(--color-text-primary);
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Focus styles */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: 2px;
+  }
+
+  /* Utility classes */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Touch target utility */
+  .touch-target {
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+  }
+
+  /* iOS momentum scrolling */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+</style>
+
+<style>
+  /* Skip link for accessibility */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    z-index: 9999;
+  }
+
+  .skip-link:focus {
+    position: fixed;
+    top: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: auto;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--color-accent-primary);
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* App layout */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-md);
+    padding-bottom: calc(var(--space-md) + var(--safe-area-inset-bottom));
+    padding-left: calc(var(--space-md) + var(--safe-area-inset-left));
+    padding-right: calc(var(--space-md) + var(--safe-area-inset-right));
+  }
+
+  /* Header */
+  .app-header {
+    text-align: center;
+    padding: var(--space-lg) 0;
+    padding-top: calc(var(--space-lg) + var(--safe-area-inset-top));
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: var(--space-lg);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .logo-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .logo h1 {
+    background: linear-gradient(
+      135deg,
+      var(--color-accent-primary) 0%,
+      var(--color-accent-secondary) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .tagline {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--space-xs);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  /* Main content */
+  .app-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Footer */
+  .app-footer {
+    text-align: center;
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--color-border-subtle);
+    margin-top: var(--space-lg);
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .portfolio-links {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .portfolio-link {
+    color: var(--color-accent-primary);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target-min);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .divider {
+    color: var(--color-border);
+  }
+
+  .social-icon {
+    color: var(--color-text-muted);
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target-min);
+    min-width: var(--touch-target-min);
+    padding: var(--space-sm);
+  }
+
+  .social-icon:hover {
+    color: var(--color-text-primary);
+  }
+
+  .social-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .legal-text {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.7;
+  }
+
+  .legal-text a {
+    color: var(--color-accent-secondary);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .app-container {
+      padding: var(--space-sm);
+      padding-bottom: calc(var(--space-sm) + var(--safe-area-inset-bottom));
+      padding-left: calc(var(--space-sm) + var(--safe-area-inset-left));
+      padding-right: calc(var(--space-sm) + var(--safe-area-inset-right));
+    }
+
+    .app-header {
+      padding-top: calc(var(--space-md) + var(--safe-area-inset-top));
+    }
+
+    .logo h1 {
+      font-size: 1.35rem;
+    }
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .app-container {
+      padding: var(--space-xs);
+      padding-bottom: calc(var(--space-xs) + var(--safe-area-inset-bottom));
+      padding-left: calc(var(--space-xs) + var(--safe-area-inset-left));
+      padding-right: calc(var(--space-xs) + var(--safe-area-inset-right));
+    }
+
+    .logo {
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .logo h1 {
+      font-size: 1.15rem;
+    }
+
+    .portfolio-links {
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .portfolio-link {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .divider {
+      display: none;
+    }
+  }
+</style>

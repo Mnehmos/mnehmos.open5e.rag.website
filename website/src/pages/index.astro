@@ -1,0 +1,136 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ChatInterface from '../components/ChatInterface.astro';
+---
+
+<Layout title="Open5e Developer Chatbot">
+  <section class="chat-section">
+    <div class="intro-text">
+      <p>
+        Ask questions about the <strong>Open5e</strong> source code. This RAG-powered assistant
+        searches through the Django REST API backend and Nuxt.js frontend repositories to help
+        you understand how the project works.
+      </p>
+    </div>
+
+    <!-- Suggested Questions -->
+    <div class="tip-buttons">
+      <button class="tip-btn" data-question="How do I add a new monster to the API?">
+        Adding monsters
+      </button>
+      <button class="tip-btn" data-question="How does the spell search work in the frontend?">
+        Spell search
+      </button>
+      <button class="tip-btn" data-question="What models are available in the API?">
+        API models
+      </button>
+      <button class="tip-btn" data-question="How are pages structured in the Nuxt frontend?">
+        Frontend pages
+      </button>
+    </div>
+
+    <ChatInterface
+      placeholder="Ask about Open5e source code..."
+      welcomeMessage="Welcome! I'm your Open5e codebase guide. Ask me about the Django API, Nuxt.js frontend, models, views, components, or any part of the source code. I'll search through the repositories and show you relevant code snippets with links to GitHub."
+    />
+  </section>
+</Layout>
+
+<style>
+  .chat-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    flex: 1;
+  }
+
+  .intro-text {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .intro-text p {
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .intro-text strong {
+    color: var(--color-accent-primary);
+  }
+
+  .tip-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tip-btn {
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+  }
+
+  .tip-btn:hover {
+    background: var(--color-bg-tertiary);
+    border-color: var(--color-accent-primary);
+    color: var(--color-accent-primary);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .intro-text p {
+      font-size: 0.9rem;
+    }
+
+    .tip-buttons {
+      gap: 0.35rem;
+    }
+
+    .tip-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .intro-text {
+      display: none;
+    }
+
+    .tip-btn {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  // Tip button auto-submit functionality
+  const tipButtons = document.querySelectorAll('.tip-btn');
+  const chatInput = document.getElementById('chat-input') as HTMLTextAreaElement;
+  const chatForm = document.getElementById('chat-form') as HTMLFormElement;
+
+  tipButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const question = btn.getAttribute('data-question');
+      if (question && chatInput && chatForm) {
+        chatInput.value = question;
+        chatInput.dispatchEvent(new Event('input'));
+        chatForm.requestSubmit();
+      }
+    });
+  });
+</script>
