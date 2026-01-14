@@ -219,7 +219,7 @@ async function generateQueryEmbedding(query: string): Promise<number[]> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "text-embedding-3-large",
+      model: "text-embedding-3-small",
       input: query,
     }),
   });
@@ -761,10 +761,16 @@ app.post("/chat", async (req, res) => {
     return res.status(400).json({ error: "question is required" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: "OPENAI_API_KEY not configured" });
+  // Support both OpenRouter and OpenAI - prefer OpenRouter
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+  const openAiKey = process.env.OPENAI_API_KEY;
+
+  if (!openRouterKey && !openAiKey) {
+    return res.status(500).json({ error: "No LLM API key configured (OPENROUTER_API_KEY or OPENAI_API_KEY)" });
   }
+
+  const useOpenRouter = !!openRouterKey;
+  const apiKey = openRouterKey || openAiKey;
 
   // Generate conversation_id if not provided
   const activeConversationId = conversation_id || randomUUID();
@@ -812,20 +818,37 @@ ${context || "No relevant documents found."}${conversationHistory}`;
   })}\n\n`);
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // Choose API endpoint and model based on provider
+    const apiUrl = useOpenRouter
+      ? "https://openrouter.ai/api/v1/chat/completions"
+      : "https://api.openai.com/v1/chat/completions";
+
+    const defaultModel = useOpenRouter
+      ? "openai/gpt-oss-120b"
+      : (process.env.OPENAI_MODEL || "gpt-5-nano-2025-08-07");
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    };
+
+    // Add OpenRouter-specific headers
+    if (useOpenRouter) {
+      headers["HTTP-Referer"] = process.env.APP_URL || "https://mnehmos.github.io/mnehmos.open5e.rag.website/";
+      headers["X-Title"] = "Open5e Developer Chatbot";
+    }
+
+    const response = await fetch(apiUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
+      headers,
       body: JSON.stringify({
-        model: model || process.env.OPENAI_MODEL || "gpt-5-nano-2025-08-07",
+        model: model || defaultModel,
         messages: [
           { role: "system", content: finalSystemPrompt },
           { role: "user", content: question }
         ],
         stream: true,
-        max_completion_tokens: 2048
+        max_tokens: 2048
       })
     });
 
