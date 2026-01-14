@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(powershell -Command \"[Environment]::GetEnvironmentVariable\\(''OPENAI_API_KEY'', ''Machine''\\)\")",
+      "Bash(xcopy:*)"
+    ]
+  }
+}
