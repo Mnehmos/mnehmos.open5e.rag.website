@@ -1223,18 +1223,29 @@ const {
             } else if (data.type === "error") {
               throw new Error(data.error || "Unknown error from API");
             }
-          } catch (e) {
-            if (e instanceof Error && e.message.includes("error")) {
-              throw e;
+            // Ignore "done" events and other types
+          } catch (parseError) {
+            // Only skip JSON parse errors, not thrown API errors
+            if (parseError instanceof SyntaxError) {
+              // Skip unparseable JSON lines (shouldn't happen with valid SSE)
+              console.warn("Failed to parse SSE line:", dataStr);
+            } else {
+              throw parseError;
             }
-            // Skip unparseable lines
           }
         }
       }
     }
 
+    const answer = answerParts.join("");
+    console.log("SSE parsing complete:", {
+      sourcesCount: sources.length,
+      answerLength: answer.length,
+      answerPreview: answer.substring(0, 100)
+    });
+
     return {
-      answer: answerParts.join(""),
+      answer,
       sources,
       model: "gpt-4",
       search_results_count: sources.length
