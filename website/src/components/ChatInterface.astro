@@ -1179,17 +1179,66 @@ const {
     }
   });
 
-  async function sendMessage(message: string): Promise<ChatResponse> {
+  async function sendMessage(question: string): Promise<ChatResponse> {
     const response = await fetch(`${CHAT_API_URL}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ question }),
     });
     if (!response.ok) {
       const errorText = await response.text().catch(() => "Unknown error");
       throw new Error(`Request failed: ${response.status} - ${errorText}`);
     }
-    return response.json();
+
+    // Parse SSE stream
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error("No response body");
+    }
+
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let sources: SourceReference[] = [];
+    let answerParts: string[] = [];
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const dataStr = line.slice(6);
+          if (dataStr === "[DONE]") continue;
+
+          try {
+            const data = JSON.parse(dataStr);
+            if (data.type === "sources") {
+              sources = data.sources || [];
+            } else if (data.type === "delta" && data.text) {
+              answerParts.push(data.text);
+            } else if (data.type === "error") {
+              throw new Error(data.error || "Unknown error from API");
+            }
+          } catch (e) {
+            if (e instanceof Error && e.message.includes("error")) {
+              throw e;
+            }
+            // Skip unparseable lines
+          }
+        }
+      }
+    }
+
+    return {
+      answer: answerParts.join(""),
+      sources,
+      model: "gpt-4",
+      search_results_count: sources.length
+    };
   }
 
   function getRepoType(url: string): "api" | "frontend" {
