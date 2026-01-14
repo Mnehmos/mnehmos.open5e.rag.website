@@ -205,6 +205,7 @@ function searchSemantic(queryVector: number[], topK: number): Array<{ chunk_id: 
 
 /**
  * Generate query embedding using OpenAI API
+ * IMPORTANT: Must match the model used to create the vectors (text-embedding-3-large)
  */
 async function generateQueryEmbedding(query: string): Promise<number[]> {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -219,7 +220,7 @@ async function generateQueryEmbedding(query: string): Promise<number[]> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "text-embedding-3-small",
+      model: "text-embedding-3-large",  // Must match index embedding model
       input: query,
     }),
   });
@@ -794,8 +795,14 @@ app.post("/chat", async (req, res) => {
   });
   const context = contextParts.join("\n\n---\n\n");
 
-  const defaultSystemPrompt = `You are a helpful assistant with access to a knowledge base about ${manifest?.name || "open5e-rag"}.
+  const defaultSystemPrompt = `You are a helpful developer assistant for the Open5e project - an open-source D&D 5e reference platform.
+
+Your knowledge base contains source code from TWO repositories:
+1. **open5e-api** (Django REST API backend) - Python models, views, serializers, and tests
+2. **open5e** (Nuxt.js frontend) - Vue components, pages, composables, and TypeScript utilities
+
 Answer questions using ONLY the retrieved documents below. Always cite sources using [Source N] notation.
+When referencing code, identify whether it's from the API (Python/Django) or Frontend (Vue/Nuxt).
 If the documents don't contain relevant information to answer the question, say so clearly.
 
 RETRIEVED DOCUMENTS:

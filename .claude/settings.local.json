@@ -20,7 +20,12 @@
       "Bash(gh variable list:*)",
       "Bash(MSYS_NO_PATHCONV=1 gh variable set:*)",
       "Bash(gh run list:*)",
-      "Bash(gh run watch:*)"
+      "Bash(gh run watch:*)",
+      "mcp__mnehmos_ooda_mcp__read_file",
+      "mcp__mnehmos_ooda_mcp__search_in_file",
+      "mcp__mnehmos_ooda_mcp__copy_file",
+      "Bash(railway status:*)",
+      "Bash(MSYS_NO_PATHCONV=1 railway up:*)"
     ]
   }
 }
